@@ -60,7 +60,7 @@ module cpu (
     // ----------------------------------------------------------------
     // Memorie
     // ----------------------------------------------------------------
-    reg [15:0] rom [0:63];   // 64 x 16-bit - memorie program
+    reg [15:0] rom [0:31];   // 32 x 16-bit - memorie program
     reg [7:0]  ram [0:15];   // 16 x  8-bit - memorie date
 
     // ----------------------------------------------------------------
@@ -71,7 +71,7 @@ module cpu (
     // ----------------------------------------------------------------
     // Registre CPU
     // ----------------------------------------------------------------
-    reg [5:0]  pc;     // Program Counter
+    reg [4:0]  pc;     // Program Counter (5-bit, adreseaza 0-31)
     reg [15:0] ir;     // Instruction Register
     reg [1:0]  state;  // Stare FSM
 
@@ -114,7 +114,7 @@ module cpu (
     wire [2:0] f_rs1  = ir[8:6];   // sursa 1 / adresa pt LOAD/STORE
     wire [2:0] f_rs2  = ir[5:3];   // sursa 2 (R-type)
     wire [7:0] f_imm  = ir[7:0];   // imediat 8-bit (LDI)
-    wire [5:0] f_addr = ir[5:0];   // adresa salt (JMP, JZ, JNZ)
+    wire [4:0] f_addr = ir[4:0];   // adresa salt 5-bit (JMP, JZ, JNZ) - max 31
 
     // ----------------------------------------------------------------
     // Intrari ALU
@@ -138,7 +138,7 @@ module cpu (
     // ----------------------------------------------------------------
     // Logica incarcare program in ROM
     // ----------------------------------------------------------------
-    reg [5:0] rom_wr_addr;
+    reg [4:0] rom_wr_addr;
     reg [7:0] load_high;
     reg       load_byte_idx;   // 0=asteapta byte high, 1=asteapta byte low
     reg       load_valid_r;
@@ -153,12 +153,12 @@ module cpu (
     // Scriere ROM (cate 2 bytes = 1 instructiune de 16 biti)
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            rom_wr_addr   <= 6'd0;
+            rom_wr_addr   <= 5'd0;
             load_byte_idx <= 1'b0;
             load_high     <= 8'd0;
         end else if (!load_mode) begin
             // Reset pointer la iesirea din modul incarcare
-            rom_wr_addr   <= 6'd0;
+            rom_wr_addr   <= 5'd0;
             load_byte_idx <= 1'b0;
         end else if (load_valid_pulse) begin
             if (!load_byte_idx) begin
@@ -168,7 +168,7 @@ module cpu (
             end else begin
                 // Al doilea byte: parte low -> scriere in ROM
                 rom[rom_wr_addr] <= {load_high, data_in};
-                rom_wr_addr      <= rom_wr_addr + 6'd1;
+                rom_wr_addr      <= rom_wr_addr + 5'd1;
                 load_byte_idx    <= 1'b0;
             end
         end
@@ -180,7 +180,7 @@ module cpu (
     integer i;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            pc     <= 6'd0;
+            pc     <= 5'd0;
             state  <= FETCH;
             ir     <= 16'd0;
             io_out <= 8'd0;
@@ -191,7 +191,7 @@ module cpu (
                 regs[i] <= 8'd0;
         end else if (load_mode) begin
             // CPU oprit in timp ce se incarca programul
-            pc    <= 6'd0;
+            pc    <= 5'd0;
             state <= FETCH;
         end else begin
             case (state)
@@ -199,7 +199,7 @@ module cpu (
                 // ---- FETCH: citeste instructiunea, incrementeaza PC ----
                 FETCH: begin
                     ir    <= rom[pc];
-                    pc    <= pc + 6'd1;
+                    pc    <= pc + 5'd1;
                     state <= DECODE;
                 end
 
