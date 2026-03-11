@@ -95,9 +95,9 @@ module top_basys3 (
     // LED-uri
     // ----------------------------------------------------------
     assign LED[7:0]   = uo_out;        // rezultat OUT
-    assign LED[8]     = uio_out[0];    // flag Zero
-    assign LED[9]     = uio_out[1];    // flag Carry
-    assign LED[10]    = uio_out[2];    // flag Negative
+    assign LED[8]     = uio_out[2];    // flag Zero   (uio[2])
+    assign LED[9]     = uio_out[3];    // flag Carry  (uio[3])
+    assign LED[10]    = uio_out[4];    // flag Negative (uio[4])
     assign LED[11]    = SW[8];         // load_mode activ
     assign LED[15:12] = 4'b0000;
 

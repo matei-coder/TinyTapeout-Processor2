@@ -326,12 +326,13 @@ endmodule
 //
 //  uio_in [0]    -> load_mode   (1 = incarcare program, 0 = executie)
 //  uio_in [1]    -> load_valid  (puls pentru fiecare byte incarcat)
-//  uio_in [7:2]  -> neutilizati
+//  uio_in [7:5]  -> neutilizati
 //
-//  uio_out[0]    -> flag_zero   (rezultat 0 dupa ultima operatie ALU)
-//  uio_out[1]    -> flag_carry  (carry/borrow dupa ultima operatie)
-//  uio_out[2]    -> flag_neg    (rezultat negativ dupa ultima operatie)
-//  uio_out[7:3]  -> 0
+//  uio_out[2]    -> flag_zero   (rezultat 0 dupa ultima operatie ALU)
+//  uio_out[3]    -> flag_carry  (carry/borrow dupa ultima operatie)
+//  uio_out[4]    -> flag_neg    (rezultat negativ dupa ultima operatie)
+//  uio_out[7:5]  -> 0
+//  uio_out[1:0]  -> 0 (neutilizati, directie input)
 //
 // Protocol incarcare program:
 //  1. Seteaza load_mode = 1
@@ -355,8 +356,10 @@ module tt_um_mchiriac (
     wire flag_zero, flag_carry, flag_neg;
 
     // uio[2:0] sunt iesiri (flaguri), restul sunt intrari
-    assign uio_oe  = 8'b00000111;
-    assign uio_out = {5'b00000, flag_neg, flag_carry, flag_zero};
+    // uio[0]=input(load_mode), uio[1]=input(load_valid)
+    // uio[2]=output(flag_zero), uio[3]=output(flag_carry), uio[4]=output(flag_neg)
+    assign uio_oe  = 8'b00011100;
+    assign uio_out = {3'b000, flag_neg, flag_carry, flag_zero, 2'b00};
 
     cpu cpu_inst (
         .clk        (clk),
@@ -371,6 +374,6 @@ module tt_um_mchiriac (
         .flag_neg   (flag_neg)
     );
 
-    wire _unused = &{ena, uio_in[7:2]};
+    wire _unused = &{ena, uio_in[7:5]};
 
 endmodule

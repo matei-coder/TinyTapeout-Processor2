@@ -64,9 +64,9 @@ Special cases:
 | `uo_out[7:0]` | Output | Result of `OUT` instruction |
 | `uio_in[0]`   | Input  | `load_mode`: 1 = loading program, 0 = executing |
 | `uio_in[1]`   | Input  | `load_valid`: rising edge loads one byte |
-| `uio_out[0]`  | Output | Flag Zero (Z) |
-| `uio_out[1]`  | Output | Flag Carry (C) |
-| `uio_out[2]`  | Output | Flag Negative (N) |
+| `uio_out[2]`  | Output | Flag Zero (Z) |
+| `uio_out[3]`  | Output | Flag Carry (C) |
+| `uio_out[4]`  | Output | Flag Negative (N) |
 
 ## How to test
 
@@ -118,9 +118,9 @@ JMP 0            ; addr 7  restart (R1=10, reset to 0)
 | Signal | What to observe |
 |--------|----------------|
 | `uo_out[7:0]` | Shows 0x00 → 0x01 → ... → 0x09 → 0x00 cycling |
-| `uio_out[0]` (Z flag) | Goes high when result = 0 |
-| `uio_out[1]` (C flag) | Goes high on carry/borrow |
-| `uio_out[2]` (N flag) | Goes high when result MSB = 1 |
+| `uio_out[2]` (Z flag) | Goes high when result = 0 |
+| `uio_out[3]` (C flag) | Goes high on carry/borrow |
+| `uio_out[4]` (N flag) | Goes high when result MSB = 1 |
 
 ## External hardware
 
