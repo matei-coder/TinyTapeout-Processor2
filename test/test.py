@@ -42,7 +42,7 @@ async def test_project(dut):
     # Asteapta executia (3 cicluri/instructiune * 2 instructiuni + marja)
     await ClockCycles(dut.clk, 100)#era 20
 
-   # assert dut.uo_out.value == 50, f"Expected 50, got {dut.uo_out.value}"
+   ## assert dut.uo_out.value == 50, f"Expected 50, got {dut.uo_out.value}"
 try:
     result = int(dut.uo_out.value)
     assert result == 50, f"Expected 50, got {result}"
