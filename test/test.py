@@ -44,8 +44,8 @@ async def test_project(dut):
 
    ## assert dut.uo_out.value == 50, f"Expected 50, got {dut.uo_out.value}"
     try:
-        result = int(dut.uo_out.value)
-        assert result == 50, f"Expected 50, got {result}"
-    except ValueError:
-    # X values in gate-level sim - skip assertion
-    dut._log.warning("Output has X values in gate-level sim, skipping assert")
+            result = int(dut.uo_out.value)
+            assert result == 50, f"Expected 50, got {result}"
+        except ValueError:
+        # X values in gate-level sim - skip assertion
+        dut._log.warning("Output has X values in gate-level sim, skipping assert")
