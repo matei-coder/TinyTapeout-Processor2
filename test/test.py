@@ -6,9 +6,9 @@ from cocotb.triggers import ClockCycles
 
 async def load_byte(dut, byte_val):
     dut.ui_in.value = byte_val
-    dut.uio_in.value = 0b11  # load_mode=1, load_valid=1
+    dut.uio_in.value = 0b11
     await ClockCycles(dut.clk, 2)
-    dut.uio_in.value = 0b01  # load_mode=1, load_valid=0
+    dut.uio_in.value = 0b01
     await ClockCycles(dut.clk, 1)
 
 @cocotb.test()
@@ -22,30 +22,24 @@ async def test_project(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 50) #era 10
+    await ClockCycles(dut.clk, 50)
     dut.rst_n.value = 1
 
-    # Intra in load_mode
-    dut.uio_in.value = 0b01  # load_mode=1
+    dut.uio_in.value = 0b01
     await ClockCycles(dut.clk, 2)
 
-    # Program: LDI R0, #50 (0x7032) apoi OUT R0 (0xE000)
-    await load_byte(dut, 0x70)  # LDI high byte
-    await load_byte(dut, 0x32)  # LDI low byte (50 = 0x32)
-    await load_byte(dut, 0xE0)  # OUT high byte
-    await load_byte(dut, 0x00)  # OUT low byte
+    await load_byte(dut, 0x70)
+    await load_byte(dut, 0x32)
+    await load_byte(dut, 0xE0)
+    await load_byte(dut, 0x00)
 
-    # Iesire din load_mode -> CPU porneste
     dut.uio_in.value = 0b00
     dut.ui_in.value = 0
 
-    # Asteapta executia (3 cicluri/instructiune * 2 instructiuni + marja)
-    await ClockCycles(dut.clk, 100)#era 20
+    await ClockCycles(dut.clk, 100)
 
-   ## assert dut.uo_out.value == 50, f"Expected 50, got {dut.uo_out.value}"
     try:
-            result = int(dut.uo_out.value)
-            assert result == 50, f"Expected 50, got {result}"
-        except ValueError:
-        # X values in gate-level sim - skip assertion
+        result = int(dut.uo_out.value)
+        assert result == 50, f"Expected 50, got {result}"
+    except ValueError:
         dut._log.warning("Output has X values in gate-level sim, skipping assert")
