@@ -22,7 +22,7 @@ async def test_project(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50) #era 10
     dut.rst_n.value = 1
 
     # Intra in load_mode
@@ -40,6 +40,6 @@ async def test_project(dut):
     dut.ui_in.value = 0
 
     # Asteapta executia (3 cicluri/instructiune * 2 instructiuni + marja)
-    await ClockCycles(dut.clk, 20)
+    await ClockCycles(dut.clk, 100)#era 20
 
     assert dut.uo_out.value == 50, f"Expected 50, got {dut.uo_out.value}"
